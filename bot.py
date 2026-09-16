@@ -6,8 +6,8 @@ from bs4 import BeautifulSoup
 # ============ НАСТРОЙКИ ============
 TG_BOT_TOKEN = os.getenv("TG_BOT_TOKEN", "")
 TG_CHAT_ID   = os.getenv("TG_CHAT_ID", "")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-OPENAI_MODEL   = "gpt-4o-mini"
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+GROQ_MODEL   = "llama-3.3-70b-versatile"
 # ===================================
 
 RSS_URL = "https://forklog.com/feed"
@@ -101,17 +101,18 @@ def _clamp(text):
     return cut[:cut.rfind(" ")].rstrip(" ,;") + "..."
 
 def make_post(art):
-    if OPENAI_API_KEY and art["text"]:
+    if GROQ_API_KEY and art["text"]:
         try:
-            resp = SESS.post("https://api.openai.com/v1/chat/completions",
-                             headers={"Authorization": f"Bearer {OPENAI_API_KEY}"},
-                             json={"model": OPENAI_MODEL, "temperature": 0.4, "max_tokens": 250,
+            resp = SESS.post("https://api.groq.com/openai/v1/chat/completions",
+                             headers={"Authorization": f"Bearer {GROQ_API_KEY}"},
+                             json={"model": GROQ_MODEL, "temperature": 0.4, "max_tokens": 250,
                                    "messages": [{"role": "system", "content": SYSTEM_PROMPT},
                                                 {"role": "user", "content": f"Заголовок: {art['title']}\nТекст: {art['text'][:12000]}"}]},
                              timeout=60)
             resp.raise_for_status()
             out = resp.json()["choices"][0]["message"]["content"].strip()
             if 120 <= len(out) <= 500:
+                log.info("Пост написан нейросетью")
                 return _clamp(out)
         except Exception as ex:
             log.warning("LLM не ответила, резервный режим: %s", ex)
