@@ -48,14 +48,27 @@ def fetch_posts():
             br.replace_with("\n")
         text = tnode.get_text()
         photo = ""
-        m = re.search(r"url\('([^']+)'\)", str(wrap))
-        if m:
-            photo = m.group(1)
+        for el in wrap.find_all(attrs={"style": re.compile(r"url\(")}):
+            cls = " ".join(el.get("class") or [])
+            if "avatar" in cls or "emoji" in cls:
+                continue
+            m = re.search(r"url\(['\"]?([^'\")]+)", el["style"])
+            if m:
+                photo = m.group(1)
+                break
         if not photo:
-            img = wrap.find("img")
-            if img and img.get("src"):
-                photo = img["src"]
+            for img in wrap.find_all("img"):
+                src = img.get("src") or ""
+                cls = " ".join(img.get("class") or [])
+                if src and "/img/emoji/" not in src and "emoji" not in cls:
+                    photo = src
+                    break
+        if photo.startswith("//"):
+            photo = "https:" + photo
         posts.append({"id": pid, "text": text, "photo": photo})
+    for i, p in enumerate(posts):
+        if not p["photo"] and i > 0 and posts[i - 1]["photo"] and not posts[i - 1]["text"]:
+            p["photo"] = posts[i - 1]["photo"]
     return posts
 
 def send(photo, text):
