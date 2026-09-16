@@ -105,13 +105,13 @@ def make_post(art):
         try:
             resp = SESS.post("https://api.groq.com/openai/v1/chat/completions",
                              headers={"Authorization": f"Bearer {GROQ_API_KEY}"},
-                             json={"model": GROQ_MODEL, "temperature": 0.4, "max_tokens": 250,
+                             json={"model": GROQ_MODEL, "temperature": 0.4, "max_tokens": 1024,
                                    "messages": [{"role": "system", "content": SYSTEM_PROMPT},
                                                 {"role": "user", "content": f"Заголовок: {art['title']}\nТекст: {art['text'][:12000]}"}]},
                              timeout=60)
             resp.raise_for_status()
             out = resp.json()["choices"][0]["message"]["content"].strip()
-            if 120 <= len(out) <= 500:
+            if 100 <= len(out) <= 600:
                 log.info("Пост написан нейросетью")
                 return _clamp(out)
         except Exception as ex:
