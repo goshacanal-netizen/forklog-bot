@@ -111,7 +111,8 @@ def make_post(art):
                              timeout=60)
             resp.raise_for_status()
             out = resp.json()["choices"][0]["message"]["content"].strip()
-            if 100 <= len(out) <= 600:
+                        log.info("Ответ LLM: %d симв.: %s", len(out), out[:80])
+            if len(out) >= 80:
                 log.info("Пост написан нейросетью")
                 return _clamp(out)
         except Exception as ex:
