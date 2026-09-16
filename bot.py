@@ -14,7 +14,7 @@ RSS_URL = "https://forklog.com/feed"
 CHECK_INTERVAL = 600
 DELAY_BETWEEN_POSTS = 7
 POST_MAX_LEN = 340
-ADD_SOURCE_LINK = True
+ADD_SOURCE_LINK = False
 SEEN_FILE = "seen.json"
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"}
