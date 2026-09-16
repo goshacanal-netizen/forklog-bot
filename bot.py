@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 TG_BOT_TOKEN = os.getenv("TG_BOT_TOKEN", "")
 TG_CHAT_ID   = os.getenv("TG_CHAT_ID", "")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-GROQ_MODEL   = "llama-3.3-70b-versatile"
+   GROQ_MODEL   = "openai/gpt-oss-120b"
 # ===================================
 
 RSS_URL = "https://forklog.com/feed"
